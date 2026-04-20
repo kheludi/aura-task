@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    @apply bg-aura-dark text-aura-text font-sans;
+    background-image: radial-gradient(circle at 1% 1%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+  }
+  
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-aura-darker rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-purple-600 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-purple-500;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-aura-card/80 backdrop-blur-sm border border-aura-border rounded-2xl;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent;
+  }
+  
+  .task-card {
+    @apply glass-card p-4 cursor-move transition-all duration-300 hover:scale-102 hover:shadow-xl;
+  }
+  
+  .status-column {
+    @apply glass-card p-4 min-h-[500px];
+  }
+  
+  .priority-high {
+    @apply border-l-4 border-red-500;
+  }
+  
+  .priority-medium {
+    @apply border-l-4 border-yellow-500;
+  }
+  
+  .priority-low {
+    @apply border-l-4 border-green-500;
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
