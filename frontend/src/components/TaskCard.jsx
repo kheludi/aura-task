@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Calendar, Trash2, Edit2, GripVertical, Clock, Flag, Lock } from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import api from '../api';
 
@@ -121,13 +121,13 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
         <div className="flex space-x-2">
           <button
             onClick={handleUpdate}
-            className="flex-1 px-3 py-2 bg-purple-500 rounded-lg hover:bg-purple-600 transition"
+            className="flex-1 px-3 py-2 bg-purple-500 rounded-lg hover:bg-purple-600 transition text-white"
           >
             Save
           </button>
           <button
             onClick={() => setIsEditing(false)}
-            className="flex-1 px-3 py-2 bg-gray-500/20 rounded-lg hover:bg-gray-500/30 transition"
+            className="flex-1 px-3 py-2 bg-gray-500/20 rounded-lg hover:bg-gray-500/30 transition text-white"
           >
             Cancel
           </button>
@@ -149,19 +149,23 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
+            
             {task.status !== 'overdue' ? (
-  <div
-    {...attributes}
-    {...listeners}
-    className="cursor-grab active:cursor-grabbing hover:text-purple-400 transition"
-  >
-    <GripVertical className="w-4 h-4 text-gray-500" />
-  </div>
-) : (
-  <div title="Overdue tasks are locked">
-    <Lock className="w-4 h-4 text-red-500/50" />
-  </div>
-)}
+              <div
+                {...attributes}
+                {...listeners}
+                className="cursor-grab active:cursor-grabbing hover:text-purple-400 transition"
+              >
+                <GripVertical className="w-4 h-4 text-gray-500" />
+              </div>
+            ) : (
+              <div title="Overdue tasks are locked">
+                <Lock className="w-4 h-4 text-red-500/50" />
+              </div>
+            )}
+
+            <h4 className="font-semibold text-white line-clamp-2">{task.title}</h4>
+          </div>
           
           {task.description && (
             <p className="text-sm text-gray-400 mb-3 line-clamp-2">{task.description}</p>
