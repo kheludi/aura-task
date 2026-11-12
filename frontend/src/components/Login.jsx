@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogIn, Sparkles, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
-import api from '../api';
 
 function Login() {
   const navigate = useNavigate();
@@ -15,51 +14,60 @@ function Login() {
     setLoading(true);
     
     try {
-      const response = await api.post('/auth/login', formData);
-      const { token, user } = response.data;
+      // Using native fetch to bypass Axios completely
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
       
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', user.id);
-      localStorage.setItem('userRole', user.role);
-      localStorage.setItem('username', user.username);
+      const data = await response.json();
+      console.log("Login Response:", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
       
-      toast.success(`Welcome back, ${user.username}! ✨`);
+      // Save user data
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.user.id);
+      localStorage.setItem('userRole', data.user.role);
+      localStorage.setItem('username', data.user.username);
       
-      setTimeout(() => {
-        if (user.role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
-        }
-      }, 500);
+      toast.success(`Welcome back, ${data.user.username}!`);
+      
+      // Force redirect directly using window.location
+      if (data.user.role === 'admin') {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = '/dashboard';
+      }
+      
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Login failed');
-    } finally {
-      setLoading(false);
+      console.error("Login Error:", error);
+      toast.error(error.message || 'Network error. Cannot reach server.');
+      setLoading(false); // Stop the loading spinner if there's an error
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-aura-dark">
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-pink-900/20"></div>
-      <div className="absolute top-20 left-10 w-72 h-72 bg-purple-600 rounded-full blur-[100px] opacity-20 animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-600 rounded-full blur-[120px] opacity-20 animate-pulse delay-1000"></div>
       
-      <div className="glass-card p-8 w-full max-w-md relative z-10 animate-fadeIn">
+      <div className="glass-card p-8 w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 mb-4 animate-float">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 mb-4">
             <Sparkles className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold gradient-text mb-2">Aura Task</h1>
-          <p className="text-gray-400">Welcome back to the future of productivity</p>
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-2">Aura Task</h1>
+          <p className="text-gray-400">Welcome back</p>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
-              <Mail className="inline w-4 h-4 mr-2" />
-              Email Address
-            </label>
+            <label className="block text-sm font-medium mb-2 text-gray-300">Email Address</label>
             <input
               type="email"
               value={formData.email}
@@ -71,10 +79,7 @@ function Login() {
           </div>
           
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
-              <Lock className="inline w-4 h-4 mr-2" />
-              Password
-            </label>
+            <label className="block text-sm font-medium mb-2 text-gray-300">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -97,29 +102,15 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold transition-all hover:shadow-lg hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-white"
+            className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold transition-all hover:shadow-lg text-white"
           >
-            {loading ? 'Logging in...' : (
-              <>
-                <LogIn className="inline w-4 h-4 mr-2" />
-                Authorize Login
-              </>
-            )}
+            {loading ? 'Logging in...' : 'Authorize Login'}
           </button>
         </form>
         
         <p className="text-center mt-6 text-gray-400">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-purple-400 hover:text-purple-300 transition-colors">
-            Create one
-          </Link>
+          Don't have an account? <Link to="/register" className="text-purple-400">Create one</Link>
         </p>
-        
-        <div className="mt-4 p-3 bg-purple-500/10 rounded-lg text-xs text-gray-400 text-center">
-          <p>Demo Accounts:</p>
-          <p>Admin: admin@auratask.com / admin123</p>
-          <p>User: demo@auratask.com / demo123</p>
-        </div>
       </div>
     </div>
   );

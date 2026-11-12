@@ -7,6 +7,7 @@ import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
 
 function App() {
+  // Check local storage
   const token = localStorage.getItem('token');
   const userRole = localStorage.getItem('userRole');
 
@@ -15,32 +16,19 @@ function App() {
       <Toaster 
         position="top-right"
         toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#14141f',
-            color: '#e0e0e0',
-            border: '1px solid #1f1f2e',
-            borderRadius: '12px',
-          },
-          success: {
-            iconTheme: {
-              primary: '#10b981',
-              secondary: '#ffffff',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#ffffff',
-            },
-          },
+          style: { background: '#14141f', color: '#e0e0e0', border: '1px solid #1f1f2e' },
         }}
       />
       <Routes>
-        <Route path="/login" element={!token ? <Login /> : <Navigate to="/dashboard" />} />
-        <Route path="/register" element={!token ? <Register /> : <Navigate to="/dashboard" />} />
+        {/* If logged in, redirect away from login/register */}
+        <Route path="/login" element={token ? <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} /> : <Login />} />
+        <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <Register />} />
+        
+        {/* Protected Routes */}
         <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/admin" element={token && userRole === 'admin' ? <AdminPanel /> : <Navigate to="/dashboard" />} />
+        
+        {/* Default Route */}
         <Route path="/" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
