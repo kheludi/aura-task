@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Calendar, Trash2, Edit2, GripVertical, Clock, Flag } from 'lucide-react';
+import { Calendar, Trash2, Edit2, GripVertical, Clock, Flag, Lock } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import toast from 'react-hot-toast';
 import api from '../api';
@@ -149,15 +149,19 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
-            <div
-              {...attributes}
-              {...listeners}
-              className="cursor-grab active:cursor-grabbing hover:text-purple-400 transition"
-            >
-              <GripVertical className="w-4 h-4 text-gray-500" />
-            </div>
-            <h4 className="font-semibold text-white line-clamp-2">{task.title}</h4>
-          </div>
+            {task.status !== 'overdue' ? (
+  <div
+    {...attributes}
+    {...listeners}
+    className="cursor-grab active:cursor-grabbing hover:text-purple-400 transition"
+  >
+    <GripVertical className="w-4 h-4 text-gray-500" />
+  </div>
+) : (
+  <div title="Overdue tasks are locked">
+    <Lock className="w-4 h-4 text-red-500/50" />
+  </div>
+)}
           
           {task.description && (
             <p className="text-sm text-gray-400 mb-3 line-clamp-2">{task.description}</p>
