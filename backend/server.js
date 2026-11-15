@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
+import taskRoutes from './routes/tasks.js';
 
 dotenv.config();
 
@@ -10,10 +11,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Mount authentication routes
+// Mount API routes
 app.use('/auth', authRoutes);
-// Optional: If your frontend calls /api/auth, you can also support it:
+app.use('/tasks', taskRoutes);
+
+// Optional: also support /api prefixed routes if your frontend expects them
 app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running successfully' });
