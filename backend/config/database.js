@@ -1,19 +1,3 @@
-<<<<<<< HEAD
-import mysql from 'mysql2/promise';
-
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: true
-  }
-});
-
-export default pool;
-=======
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
@@ -41,4 +25,3 @@ pool.getConnection((err, connection) => {
 });
 
 module.exports = pool.promise();
->>>>>>> 34993f1d56786f83bc2eeb100f201000cd3bb60f
