@@ -1,8 +1,24 @@
-import pool from '../config/database.js';
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 async function createTables() {
-    console.log('🔧 Creating database tables...\n');
-    
+    console.log('🔧 Connecting to database...\n');
+
+    const connection = await mysql.createConnection({
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT || 3306,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        ssl: { rejectUnauthorized: false }
+    });
+
     const usersTable = `
         CREATE TABLE IF NOT EXISTS users (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -11,12 +27,10 @@ async function createTables() {
             password VARCHAR(255) NOT NULL,
             role ENUM('user', 'admin') DEFAULT 'user',
             status ENUM('active', 'suspended') DEFAULT 'active',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_email (email),
-            INDEX idx_username (username)
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     `;
-    
+
     const tasksTable = `
         CREATE TABLE IF NOT EXISTS tasks (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -29,29 +43,22 @@ async function createTables() {
             due_date DATE,
             position INT DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-            INDEX idx_user_status (user_id, status),
-            INDEX idx_due_date (due_date),
-            INDEX idx_priority (priority)
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     `;
-    
+
     try {
-        await pool.execute(usersTable);
-        console.log('✅ Users table created');
-        
-        await pool.execute(tasksTable);
-        console.log('✅ Tasks table created');
-        
-        console.log('\n✨ Tables created successfully!');
-        console.log('📝 Run node scripts/createAdmin.js to create an admin user\n');
-        
+        await connection.execute(usersTable);
+        console.log('✅ Users table verified/created');
+        await connection.execute(tasksTable);
+        console.log('✅ Tasks table verified/created');
+        console.log('\n✨ Done!');
     } catch (error) {
-        console.error('❌ Error creating tables:', error.message);
+        console.error('❌ Error:', error.message);
+    } finally {
+        await connection.end();
+        process.exit();
     }
-    
-    process.exit();
 }
 
 createTables();
