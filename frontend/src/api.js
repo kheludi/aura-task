@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://aura-task1.onrender.com/api',
-  timeout: 15000,
+  baseURL: '/api', // Relative path, lets Vercel proxy it
+  timeout: 60000,  // Increased timeout for Render cold starts
   headers: { 'Content-Type': 'application/json' },
 });
 
