@@ -11,15 +11,16 @@
     box-sizing: border-box;
   }
   
-  /* Default is Light Mode */
+  /* Modern Blueish Light Mode */
   body {
-    @apply bg-gray-50 text-gray-900 font-sans transition-colors duration-300;
-    background-image: radial-gradient(circle at 1% 1%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    @apply bg-slate-50 text-slate-800 font-sans transition-colors duration-300;
+    background-image: radial-gradient(circle at 50% 0%, rgba(224, 231, 255, 0.5) 0%, transparent 70%);
   }
   
-  /* Dark Mode overrides */
+  /* Deep Dark Mode */
   .dark body {
     @apply bg-aura-dark text-aura-text;
+    background-image: radial-gradient(circle at 1% 1%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
   }
   
   ::-webkit-scrollbar {
@@ -28,29 +29,30 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-gray-200 dark:bg-aura-darker rounded-full;
+    @apply bg-slate-200 dark:bg-aura-darker rounded-full;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-purple-600 rounded-full;
+    @apply bg-blue-400 dark:bg-purple-600 rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-purple-500;
+    @apply bg-blue-500 dark:bg-purple-500;
   }
 }
 
 @layer components {
+  /* Frosted Blue Card for Light Mode, Glass for Dark Mode */
   .glass-card {
-    @apply bg-white/80 dark:bg-aura-card/80 backdrop-blur-sm border border-gray-200 dark:border-aura-border rounded-2xl shadow-lg dark:shadow-none transition-colors duration-300;
+    @apply bg-white/70 dark:bg-aura-card/80 backdrop-blur-md border border-white/50 dark:border-aura-border rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none transition-colors duration-300;
   }
   
   .gradient-text {
-    @apply bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 dark:from-purple-400 dark:to-pink-600 bg-clip-text text-transparent;
   }
   
   .task-card {
-    @apply glass-card p-4 cursor-move transition-all duration-300 hover:scale-102 hover:shadow-xl;
+    @apply glass-card p-4 cursor-move transition-all duration-300 hover:scale-102 hover:shadow-lg;
   }
   
   .status-column {
@@ -79,21 +81,11 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideIn {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
 }
