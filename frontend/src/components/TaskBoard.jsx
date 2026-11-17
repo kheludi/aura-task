@@ -15,10 +15,10 @@ import TaskCard from './TaskCard';
 import api from '../api';
 
 const columns = [
-  { id: 'todo', title: 'To Do', icon: Circle, color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30' },
-  { id: 'doing', title: 'In Progress', icon: TrendingUp, color: 'text-yellow-400', bgColor: 'bg-yellow-500/10', borderColor: 'border-yellow-500/30' },
-  { id: 'completed', title: 'Completed', icon: CheckCircle, color: 'text-green-400', bgColor: 'bg-green-500/10', borderColor: 'border-green-500/30' },
-  { id: 'overdue', title: 'Overdue (Auto)', icon: AlertCircle, color: 'text-red-400', bgColor: 'bg-red-500/10', borderColor: 'border-red-500/30' },
+  { id: 'todo', title: 'To Do', icon: Circle, color: 'text-blue-500 dark:text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30' },
+  { id: 'doing', title: 'In Progress', icon: TrendingUp, color: 'text-yellow-500 dark:text-yellow-400', bgColor: 'bg-yellow-500/10', borderColor: 'border-yellow-500/30' },
+  { id: 'completed', title: 'Completed', icon: CheckCircle, color: 'text-green-500 dark:text-green-400', bgColor: 'bg-green-500/10', borderColor: 'border-green-500/30' },
+  { id: 'overdue', title: 'Overdue (Auto)', icon: AlertCircle, color: 'text-red-500 dark:text-red-400', bgColor: 'bg-red-500/10', borderColor: 'border-red-500/30' },
 ];
 
 // This component acts as the drop zone for each column (except Overdue)
@@ -89,13 +89,11 @@ function TaskBoard({ searchTerm = '' }) {
     }
 
     // --- RULES FOR OVERDUE ---
-    // 1. Don't allow dropping INTO the overdue column
     if (overColumnId === 'overdue') {
       toast.error('Tasks are moved to Overdue automatically when the due date passes.');
       return;
     }
 
-    // 2. Don't allow moving a task OUT OF the overdue column
     if (activeTask.status === 'overdue') {
       toast.error('Overdue tasks are locked. Please edit the due date to extend it.');
       return;
@@ -148,8 +146,8 @@ function TaskBoard({ searchTerm = '' }) {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading your tasks...</p>
+          <div className="w-16 h-16 border-4 border-blue-500 dark:border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-500 dark:text-gray-400">Loading your tasks...</p>
         </div>
       </div>
     );
@@ -159,28 +157,27 @@ function TaskBoard({ searchTerm = '' }) {
     <>
       {/* Stats Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        {/* ... (Stats cards remain exactly the same) ... */}
-        <div className="glass-card p-6"><div className="flex items-center justify-between"><div><p className="text-gray-400 text-sm">Total Tasks</p><p className="text-3xl font-bold text-white">{stats.total}</p></div><div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center"><Clock className="w-6 h-6 text-blue-400" /></div></div></div>
-        <div className="glass-card p-6"><div className="flex items-center justify-between"><div><p className="text-gray-400 text-sm">In Progress</p><p className="text-3xl font-bold text-white">{stats.progress}</p></div><div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center"><TrendingUp className="w-6 h-6 text-yellow-400" /></div></div></div>
-        <div className="glass-card p-6"><div className="flex items-center justify-between"><div><p className="text-gray-400 text-sm">Completed</p><p className="text-3xl font-bold text-white">{stats.completed}</p></div><div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center"><CheckCircle className="w-6 h-6 text-green-400" /></div></div></div>
-        <div className="glass-card p-6"><div className="flex items-center justify-between"><div><p className="text-gray-400 text-sm">Overdue</p><p className="text-3xl font-bold text-white">{stats.overdue}</p></div><div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center"><AlertCircle className="w-6 h-6 text-red-400" /></div></div></div>
+        <div className="glass-card p-6"><div className="flex items-center justify-between"><div><p className="text-slate-500 dark:text-gray-400 text-sm">Total Tasks</p><p className="text-3xl font-bold text-slate-800 dark:text-white">{stats.total}</p></div><div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center"><Clock className="w-6 h-6 text-blue-500 dark:text-blue-400" /></div></div></div>
+        <div className="glass-card p-6"><div className="flex items-center justify-between"><div><p className="text-slate-500 dark:text-gray-400 text-sm">In Progress</p><p className="text-3xl font-bold text-slate-800 dark:text-white">{stats.progress}</p></div><div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center"><TrendingUp className="w-6 h-6 text-yellow-500 dark:text-yellow-400" /></div></div></div>
+        <div className="glass-card p-6"><div className="flex items-center justify-between"><div><p className="text-slate-500 dark:text-gray-400 text-sm">Completed</p><p className="text-3xl font-bold text-slate-800 dark:text-white">{stats.completed}</p></div><div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center"><CheckCircle className="w-6 h-6 text-green-500 dark:text-green-400" /></div></div></div>
+        <div className="glass-card p-6"><div className="flex items-center justify-between"><div><p className="text-slate-500 dark:text-gray-400 text-sm">Overdue</p><p className="text-3xl font-bold text-slate-800 dark:text-white">{stats.overdue}</p></div><div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center"><AlertCircle className="w-6 h-6 text-red-500 dark:text-red-400" /></div></div></div>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-6">
         <div className="flex items-center space-x-2">
-          <Filter className="w-4 h-4 text-gray-400" />
-          <span className="text-sm text-gray-400">Filters:</span>
+          <Filter className="w-4 h-4 text-slate-500 dark:text-gray-400" />
+          <span className="text-sm text-slate-500 dark:text-gray-400">Filters:</span>
         </div>
         
-        <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="px-3 py-1 bg-aura-darker border border-aura-border rounded-lg text-sm focus:outline-none focus:border-purple-500 text-white">
+        <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="px-3 py-1 bg-white dark:bg-aura-darker border border-slate-300 dark:border-aura-border rounded-lg text-sm focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 text-slate-800 dark:text-white transition-colors">
           <option value="all">All Priorities</option>
           <option value="high">High Priority</option>
           <option value="medium">Medium Priority</option>
           <option value="low">Low Priority</option>
         </select>
         
-        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="px-3 py-1 bg-aura-darker border border-aura-border rounded-lg text-sm focus:outline-none focus:border-purple-500 text-white">
+        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="px-3 py-1 bg-white dark:bg-aura-darker border border-slate-300 dark:border-aura-border rounded-lg text-sm focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 text-slate-800 dark:text-white transition-colors">
           <option value="all">All Categories</option>
           {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
         </select>
@@ -194,9 +191,9 @@ function TaskBoard({ searchTerm = '' }) {
               <div className={`flex items-center justify-between p-3 rounded-lg ${column.bgColor} border ${column.borderColor}`}>
                 <div className="flex items-center space-x-2">
                   <column.icon className={`w-5 h-5 ${column.color}`} />
-                  <h3 className="font-semibold text-white">{column.title}</h3>
+                  <h3 className="font-semibold text-slate-800 dark:text-white">{column.title}</h3>
                 </div>
-                <span className="text-sm text-gray-400">{getTasksByStatus(column.id).length}</span>
+                <span className="text-sm text-slate-500 dark:text-gray-400">{getTasksByStatus(column.id).length}</span>
               </div>
               
               <SortableContext items={getTasksByStatus(column.id).map(t => t.id)} strategy={verticalListSortingStrategy}>
@@ -207,7 +204,7 @@ function TaskBoard({ searchTerm = '' }) {
                       <TaskCard key={task.id} task={task} onTaskUpdate={fetchTasks} />
                     ))}
                     {getTasksByStatus(column.id).length === 0 && (
-                      <div className="text-center py-8 text-gray-500 text-sm border-2 border-dashed border-aura-border rounded-xl flex flex-col items-center justify-center">
+                      <div className="text-center py-8 text-slate-400 dark:text-gray-500 text-sm border-2 border-dashed border-slate-300 dark:border-aura-border rounded-xl flex flex-col items-center justify-center">
                         <Lock className="w-6 h-6 mb-2 opacity-50" />
                         No overdue tasks
                       </div>
@@ -219,7 +216,7 @@ function TaskBoard({ searchTerm = '' }) {
                       <TaskCard key={task.id} task={task} onTaskUpdate={fetchTasks} />
                     ))}
                     {getTasksByStatus(column.id).length === 0 && (
-                      <div className="text-center py-8 text-gray-500 text-sm border-2 border-dashed border-aura-border rounded-xl">
+                      <div className="text-center py-8 text-slate-400 dark:text-gray-500 text-sm border-2 border-dashed border-slate-300 dark:border-aura-border rounded-xl">
                         Drop tasks here
                       </div>
                     )}
