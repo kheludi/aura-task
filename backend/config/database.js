@@ -1,29 +1,26 @@
-import mysql from 'mysql2';
+import pg from 'pg';
+import dotenv from 'dotenv';
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false
-  },
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+dotenv.config();
+
+const { Pool } = pg;
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
-// Test the connection on startup
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error('Database connection failed:', err.message);
-  } else {
-    console.log('Connected to Aiven Cloud MySQL Database successfully');
-    connection.release();
-  }
-});
+// Adaptor to make PostgreSQL work like MySQL (returning [rows, fields])
+const db = {
+    execute: async (sql, params = []) => {
+        let index = 1;
+        const pgSql = sql.replace(/\?/g, () => `$${index++}`);
+        const result = await pool.query(pgSql, params);
+        return [result.rows, result.fields]; 
+    },
+    getConnection: () => pool.connect()
+};
 
-const promisePool = pool.promise();
-
-export default promisePool;
+export default db;
