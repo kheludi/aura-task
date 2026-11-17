@@ -134,4 +134,90 @@ router.get('/stats/system', async (req, res) => {
     }
 });
 
+export default router;import express from 'express';
+import { authenticate, isAdmin } from '../middleware/auth.js';
+import User from '../models/User.js';
+import Task from '../models/Task.js';
+
+const router = express.Router();
+router.use(authenticate);
+router.use(isAdmin);
+
+router.get('/users', async (req, res) => {
+    try {
+        res.json(await User.getAllUsers());
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
+router.get('/summary', async (req, res) => {
+    try {
+        res.json(await Task.getAdminSummary());
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch summary' });
+    }
+});
+
+router.put('/users/:id/role', async (req, res) => {
+    try {
+        await User.updateRole(req.params.id, req.body.role);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update role' });
+    }
+});
+
+router.put('/users/:id/status', async (req, res) => {
+    try {
+        await User.updateStatus(req.params.id, req.body.status);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update status' });
+    }
+});
+
+export default router;import express from 'express';
+import { authenticate, isAdmin } from '../middleware/auth.js';
+import User from '../models/User.js';
+import Task from '../models/Task.js';
+
+const router = express.Router();
+router.use(authenticate);
+router.use(isAdmin);
+
+router.get('/users', async (req, res) => {
+    try {
+        res.json(await User.getAllUsers());
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
+router.get('/summary', async (req, res) => {
+    try {
+        res.json(await Task.getAdminSummary());
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch summary' });
+    }
+});
+
+router.put('/users/:id/role', async (req, res) => {
+    try {
+        await User.updateRole(req.params.id, req.body.role);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update role' });
+    }
+});
+
+router.put('/users/:id/status', async (req, res) => {
+    try {
+        await User.updateStatus(req.params.id, req.body.status);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update status' });
+    }
+});
+
 export default router;
