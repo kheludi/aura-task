@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogIn, Sparkles, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ThemeToggle from './ThemeToggle'; // Added import
 
 function Login() {
   const navigate = useNavigate();
@@ -53,46 +54,51 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-aura-dark">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gray-50 dark:bg-aura-dark transition-colors duration-300">
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-pink-900/20"></div>
       
+      {/* Toggle Button added here */}
+      <div className="absolute top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+
       <div className="glass-card p-8 w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 mb-4">
             <Sparkles className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-2">Aura Task</h1>
-          <p className="text-gray-400">Welcome back</p>
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-600 mb-2">Aura Task</h1>
+          <p className="text-gray-600 dark:text-gray-400">Welcome back</p>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">Email Address</label>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email Address</label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-3 bg-aura-darker border border-aura-border rounded-xl focus:outline-none focus:border-purple-500 transition-colors text-white"
+              className="w-full px-4 py-3 bg-white dark:bg-aura-darker border border-gray-300 dark:border-aura-border rounded-xl focus:outline-none focus:border-purple-500 transition-colors text-gray-900 dark:text-white"
               required
               placeholder="Enter your email"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">Password</label>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-4 py-3 bg-aura-darker border border-aura-border rounded-xl focus:outline-none focus:border-purple-500 transition-colors text-white pr-12"
+                className="w-full px-4 py-3 bg-white dark:bg-aura-darker border border-gray-300 dark:border-aura-border rounded-xl focus:outline-none focus:border-purple-500 transition-colors text-gray-900 dark:text-white pr-12"
                 required
                 placeholder="Enter your password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
@@ -108,8 +114,8 @@ function Login() {
           </button>
         </form>
         
-        <p className="text-center mt-6 text-gray-400">
-          Don't have an account? <Link to="/register" className="text-purple-400">Create one</Link>
+        <p className="text-center mt-6 text-gray-600 dark:text-gray-400">
+          Don't have an account? <Link to="/register" className="text-purple-600 dark:text-purple-400">Create one</Link>
         </p>
       </div>
     </div>
