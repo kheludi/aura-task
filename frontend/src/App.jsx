@@ -19,7 +19,6 @@ function App() {
         <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/admin" element={token && userRole === 'admin' ? <AdminPanel /> : <Navigate to="/dashboard" />} />
         <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );
