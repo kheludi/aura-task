@@ -11,9 +11,15 @@
     box-sizing: border-box;
   }
   
+  /* Default is Light Mode */
   body {
-    @apply bg-aura-dark text-aura-text font-sans;
+    @apply bg-gray-50 text-gray-900 font-sans transition-colors duration-300;
     background-image: radial-gradient(circle at 1% 1%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+  }
+  
+  /* Dark Mode overrides */
+  .dark body {
+    @apply bg-aura-dark text-aura-text;
   }
   
   ::-webkit-scrollbar {
@@ -22,7 +28,7 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-aura-darker rounded-full;
+    @apply bg-gray-200 dark:bg-aura-darker rounded-full;
   }
   
   ::-webkit-scrollbar-thumb {
@@ -36,11 +42,11 @@
 
 @layer components {
   .glass-card {
-    @apply bg-aura-card/80 backdrop-blur-sm border border-aura-border rounded-2xl;
+    @apply bg-white/80 dark:bg-aura-card/80 backdrop-blur-sm border border-gray-200 dark:border-aura-border rounded-2xl shadow-lg dark:shadow-none transition-colors duration-300;
   }
   
   .gradient-text {
-    @apply bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-600 bg-clip-text text-transparent;
   }
   
   .task-card {
