@@ -1,23 +1,32 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api', // Relative path, lets Vercel proxy it
-  timeout: 60000,  // Increased timeout for Render cold starts
-  headers: { 'Content-Type': 'application/json' },
+  baseURL: '/api', 
+  timeout: 60000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.clear();
-      if (window.location.pathname !== '/login') window.location.href = '/login';
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
