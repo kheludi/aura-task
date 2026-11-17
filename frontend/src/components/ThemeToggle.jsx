@@ -3,7 +3,6 @@ import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(() => {
-    // Check local storage or default to dark
     return localStorage.getItem('theme') !== 'light';
   });
 
@@ -20,10 +19,10 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={() => setIsDark(!isDark)}
-      className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 transition-colors"
+      className="p-2 rounded-full bg-gray-200 dark:bg-aura-darker text-gray-800 dark:text-gray-200 hover:scale-110 transition-all shadow-sm"
       title="Toggle Theme"
     >
-      {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+      {isDark ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-purple-600" />}
     </button>
   );
 }
