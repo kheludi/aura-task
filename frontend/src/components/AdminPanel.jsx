@@ -4,6 +4,7 @@ import { LogOut, Users, LayoutDashboard, Shield, Sparkles, TrendingUp, CheckCirc
 import toast from 'react-hot-toast';
 import UserManagement from './UserManagement';
 import api from '../api';
+import ThemeToggle from './ThemeToggle'; // Added import
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -26,10 +27,18 @@ function AdminPanel() {
   const fetchSummary = async () => {
     try {
       const response = await api.get('/admin/summary');
-      setSummary(response.data);
+      
+      // 1. Sort Logic: Admins first, then A-Z by username
+      const sortedData = response.data.sort((a, b) => {
+        if (a.role === 'admin' && b.role !== 'admin') return -1;
+        if (a.role !== 'admin' && b.role === 'admin') return 1;
+        return a.username.localeCompare(b.username);
+      });
+
+      setSummary(sortedData);
       
       // Calculate the top counters directly from the summary data
-      const users = response.data;
+      const users = sortedData;
       setSystemStats({
         totalUsers: users.length,
         totalTasks: users.reduce((sum, u) => sum + Number(u.total_tasks || 0), 0),
@@ -51,7 +60,7 @@ function AdminPanel() {
   };
 
   return (
-    <div className="min-h-screen bg-aura-dark">
+    <div className="min-h-screen bg-gray-50 dark:bg-aura-dark transition-colors duration-300">
       {/* Header */}
       <header className="glass-card rounded-none border-l-0 border-r-0 border-t-0 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
@@ -62,17 +71,22 @@ function AdminPanel() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold gradient-text">Admin Command Center</h1>
-                <p className="text-xs text-gray-400">Welcome, {username} (Administrator)</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Welcome, {username} (Administrator)</p>
               </div>
             </div>
             
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg transition-all flex items-center space-x-2"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
-            </button>
+            <div className="flex items-center space-x-4">
+              {/* Added Toggle Button */}
+              <ThemeToggle />
+              
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 dark:bg-red-500/20 dark:hover:bg-red-500/30 text-red-600 dark:text-red-400 border border-red-500/30 rounded-lg transition-all flex items-center space-x-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -84,27 +98,27 @@ function AdminPanel() {
           <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Total Users</p>
-                <p className="text-3xl font-bold text-white">{systemStats.totalUsers}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">Total Users</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">{systemStats.totalUsers}</p>
               </div>
               <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-400" />
+                <Users className="w-6 h-6 text-blue-500 dark:text-blue-400" />
               </div>
             </div>
             <div className="mt-2 text-xs text-gray-500">
-              <span className="text-green-400">{systemStats.activeUsers} active</span> • 
-              <span className="text-purple-400 ml-1">{systemStats.adminUsers} admins</span>
+              <span className="text-green-600 dark:text-green-400">{systemStats.activeUsers} active</span> • 
+              <span className="text-purple-600 dark:text-purple-400 ml-1">{systemStats.adminUsers} admins</span>
             </div>
           </div>
           
           <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Total Tasks</p>
-                <p className="text-3xl font-bold text-white">{systemStats.totalTasks}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">Total Tasks</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">{systemStats.totalTasks}</p>
               </div>
               <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
-                <LayoutDashboard className="w-6 h-6 text-purple-400" />
+                <LayoutDashboard className="w-6 h-6 text-purple-500 dark:text-purple-400" />
               </div>
             </div>
           </div>
@@ -112,11 +126,11 @@ function AdminPanel() {
           <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Completed Tasks</p>
-                <p className="text-3xl font-bold text-white">{systemStats.totalCompleted}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">Completed Tasks</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">{systemStats.totalCompleted}</p>
               </div>
               <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-green-400" />
+                <CheckCircle className="w-6 h-6 text-green-500 dark:text-green-400" />
               </div>
             </div>
           </div>
@@ -124,24 +138,24 @@ function AdminPanel() {
           <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Overdue Tasks</p>
-                <p className="text-3xl font-bold text-white">{systemStats.totalOverdue}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">Overdue Tasks</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">{systemStats.totalOverdue}</p>
               </div>
               <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-red-400" />
+                <AlertCircle className="w-6 h-6 text-red-500 dark:text-red-400" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-4 mb-6 border-b border-aura-border">
+        <div className="flex space-x-4 mb-6 border-b border-gray-300 dark:border-aura-border">
           <button
             onClick={() => setActiveTab('users')}
             className={`px-4 py-2 font-medium transition-all ${
               activeTab === 'users'
-                ? 'text-purple-400 border-b-2 border-purple-400'
-                : 'text-gray-400 hover:text-gray-300'
+                ? 'text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
             }`}
           >
             <Users className="inline w-4 h-4 mr-2" />
@@ -151,8 +165,8 @@ function AdminPanel() {
             onClick={() => setActiveTab('summary')}
             className={`px-4 py-2 font-medium transition-all ${
               activeTab === 'summary'
-                ? 'text-purple-400 border-b-2 border-purple-400'
-                : 'text-gray-400 hover:text-gray-300'
+                ? 'text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
             }`}
           >
             <BarChart3 className="inline w-4 h-4 mr-2" />
@@ -167,38 +181,38 @@ function AdminPanel() {
           <div className="glass-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-aura-darker border-b border-aura-border">
+                <thead className="bg-gray-100 dark:bg-aura-darker border-b border-gray-300 dark:border-aura-border">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Username</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Role</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total Tasks</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Pending</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">In Progress</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Completed</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Overdue</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Username</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Tasks</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pending</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">In Progress</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Completed</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Overdue</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-aura-border">
+                <tbody className="divide-y divide-gray-200 dark:divide-aura-border">
                   {summary.map((user) => (
-                    <tr key={user.id} className="hover:bg-white/5 transition">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{user.username}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{user.email}</td>
+                    <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{user.username}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{user.email}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                           user.role === 'admin' 
-                            ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' 
-                            : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                            ? 'bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30' 
+                            : 'bg-gray-500/10 dark:bg-gray-500/20 text-gray-600 dark:text-gray-400 border border-gray-500/30'
                         }`}>
                           <Shield className="w-3 h-3 mr-1" />
                           {user.role.toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{user.total_tasks || 0}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-400">{user.pending || 0}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-400">{user.in_progress || 0}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-400">{user.completed || 0}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-400">{user.overdue || 0}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{user.total_tasks || 0}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600 dark:text-yellow-400">{user.pending || 0}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400">{user.in_progress || 0}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 dark:text-green-400">{user.completed || 0}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 dark:text-red-400">{user.overdue || 0}</td>
                     </tr>
                   ))}
                 </tbody>
