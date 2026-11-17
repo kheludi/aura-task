@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { LogIn, Sparkles, Lock, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 
-export function Login() {
-  const navigate = useNavigate();
+export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +17,6 @@ export function Login() {
       localStorage.setItem('userId', res.data.user.id);
       localStorage.setItem('userRole', res.data.user.role);
       localStorage.setItem('username', res.data.user.username);
-      toast.success('Welcome back!');
       window.location.href = res.data.user.role === 'admin' ? '/admin' : '/dashboard';
     } catch (error) {
       toast.error(error.response?.data?.error || 'Login failed');
@@ -31,7 +29,7 @@ export function Login() {
       <div className="glass-card p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <Sparkles className="w-12 h-12 text-purple-500 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold gradient-text">Aura Task</h1>
+          <h1 className="text-3xl font-bold text-purple-400">Aura Task</h1>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input type="email" placeholder="Email" required className="w-full p-3 bg-aura-darker rounded-xl border border-aura-border text-white"
@@ -42,7 +40,7 @@ export function Login() {
             {loading ? 'Loading...' : 'Login'}
           </button>
         </form>
-        <p className="text-center mt-4 text-gray-400">Don't have an account? <Link to="/register" className="text-purple-400">Register</Link></p>
+        <p className="text-center mt-4 text-gray-400">No account? <Link to="/register" className="text-purple-400">Register</Link></p>
       </div>
     </div>
   );
