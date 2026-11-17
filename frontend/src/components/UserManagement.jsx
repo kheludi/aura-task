@@ -7,7 +7,7 @@ function UserManagement({ onUserUpdate }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingRole, setEditingRole] = useState(null);
-  const [sortBy, setSortBy] = useState('name'); // 'name' or 'date'
+  const [sortBy, setSortBy] = useState('name'); // 'name', 'newest', 'oldest'
 
   useEffect(() => {
     fetchUsers();
@@ -55,12 +55,15 @@ function UserManagement({ onUserUpdate }) {
     if (a.role === 'admin' && b.role !== 'admin') return -1;
     if (a.role !== 'admin' && b.role === 'admin') return 1;
     
-    // 2. If both are admins (or both are users), apply the dropdown sorting
+    // 2. Apply dropdown sorting
     if (sortBy === 'name') {
       return a.username.localeCompare(b.username);
-    } else {
+    } else if (sortBy === 'newest') {
+      return new Date(b.created_at) - new Date(a.created_at); // Newest first
+    } else if (sortBy === 'oldest') {
       return new Date(a.created_at) - new Date(b.created_at); // Oldest first
     }
+    return 0;
   });
 
   if (loading) {
@@ -88,7 +91,8 @@ function UserManagement({ onUserUpdate }) {
           className="px-3 py-1.5 bg-white dark:bg-aura-darker border border-slate-300 dark:border-aura-border rounded-lg text-sm focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 text-slate-800 dark:text-white transition-colors shadow-sm cursor-pointer"
         >
           <option value="name">Alphabetically (A-Z)</option>
-          <option value="date">Date Registered (Oldest)</option>
+          <option value="newest">Date Registered (Newest)</option>
+          <option value="oldest">Date Registered (Oldest)</option>
         </select>
       </div>
 
