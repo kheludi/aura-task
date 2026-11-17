@@ -7,9 +7,9 @@ import toast from 'react-hot-toast';
 import api from '../api';
 
 const priorityColors = {
-  low: 'bg-green-500/20 text-green-400 border-green-500/30',
-  medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  high: 'bg-red-500/20 text-red-400 border-red-500/30',
+  low: 'bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 border-green-500/30',
+  medium: 'bg-yellow-500/10 dark:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border-yellow-500/30',
+  high: 'bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 border-red-500/30',
 };
 
 const priorityIcons = {
@@ -46,7 +46,8 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
 
   const isOverdue = task.due_date && new Date(task.due_date) < new Date() && task.status !== 'completed';
   
-  const handleDelete = async () => {
+  const handleDelete = async (e) => {
+    e.stopPropagation(); // Prevents dragging when clicking delete
     if (window.confirm('Are you sure you want to delete this task?')) {
       setIsDeleting(true);
       try {
@@ -78,6 +79,13 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
     }
   };
 
+  // Prevents dragging if clicking a button
+  const handlePointerDown = (e) => {
+    if (e.target.closest('button')) {
+      e.stopPropagation();
+    }
+  };
+
   if (isEditing) {
     return (
       <div className="glass-card p-4 space-y-3 animate-fadeIn">
@@ -85,21 +93,21 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
           type="text"
           value={editedTask.title}
           onChange={(e) => setEditedTask({ ...editedTask, title: e.target.value })}
-          className="w-full px-3 py-2 bg-aura-darker border border-aura-border rounded-lg focus:outline-none focus:border-purple-500 text-white"
+          className="w-full px-3 py-2 bg-slate-100 dark:bg-aura-darker border border-slate-300 dark:border-aura-border rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 text-slate-800 dark:text-white transition-colors"
           placeholder="Task title"
           autoFocus
         />
         <textarea
           value={editedTask.description || ''}
           onChange={(e) => setEditedTask({ ...editedTask, description: e.target.value })}
-          className="w-full px-3 py-2 bg-aura-darker border border-aura-border rounded-lg focus:outline-none focus:border-purple-500 text-white"
+          className="w-full px-3 py-2 bg-slate-100 dark:bg-aura-darker border border-slate-300 dark:border-aura-border rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 text-slate-800 dark:text-white transition-colors"
           placeholder="Description"
           rows="2"
         />
         <select
           value={editedTask.priority}
           onChange={(e) => setEditedTask({ ...editedTask, priority: e.target.value })}
-          className="w-full px-3 py-2 bg-aura-darker border border-aura-border rounded-lg focus:outline-none focus:border-purple-500 text-white"
+          className="w-full px-3 py-2 bg-slate-100 dark:bg-aura-darker border border-slate-300 dark:border-aura-border rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 text-slate-800 dark:text-white transition-colors"
         >
           <option value="low">Low Priority</option>
           <option value="medium">Medium Priority</option>
@@ -109,25 +117,25 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
           type="text"
           value={editedTask.category || 'General'}
           onChange={(e) => setEditedTask({ ...editedTask, category: e.target.value })}
-          className="w-full px-3 py-2 bg-aura-darker border border-aura-border rounded-lg focus:outline-none focus:border-purple-500 text-white"
+          className="w-full px-3 py-2 bg-slate-100 dark:bg-aura-darker border border-slate-300 dark:border-aura-border rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 text-slate-800 dark:text-white transition-colors"
           placeholder="Category"
         />
         <input
           type="date"
           value={editedTask.due_date ? editedTask.due_date.split('T')[0] : ''}
           onChange={(e) => setEditedTask({ ...editedTask, due_date: e.target.value })}
-          className="w-full px-3 py-2 bg-aura-darker border border-aura-border rounded-lg focus:outline-none focus:border-purple-500 text-white"
+          className="w-full px-3 py-2 bg-slate-100 dark:bg-aura-darker border border-slate-300 dark:border-aura-border rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 text-slate-800 dark:text-white transition-colors"
         />
         <div className="flex space-x-2">
           <button
             onClick={handleUpdate}
-            className="flex-1 px-3 py-2 bg-purple-500 rounded-lg hover:bg-purple-600 transition text-white"
+            className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-purple-500 dark:hover:bg-purple-600 rounded-lg transition text-white"
           >
             Save
           </button>
           <button
             onClick={() => setIsEditing(false)}
-            className="flex-1 px-3 py-2 bg-gray-500/20 rounded-lg hover:bg-gray-500/30 transition text-white"
+            className="flex-1 px-3 py-2 bg-slate-300 dark:bg-gray-500/20 rounded-lg hover:bg-slate-400 dark:hover:bg-gray-500/30 transition text-slate-800 dark:text-white"
           >
             Cancel
           </button>
@@ -140,7 +148,10 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`glass-card p-4 cursor-move transition-all duration-300 hover:scale-102 hover:shadow-xl border-l-4 ${
+      {...attributes}
+      {...listeners}
+      onPointerDown={handlePointerDown}
+      className={`glass-card p-4 cursor-grab active:cursor-grabbing transition-all duration-300 hover:scale-102 hover:shadow-xl border-l-4 ${
         task.priority === 'high' ? 'border-l-red-500' :
         task.priority === 'medium' ? 'border-l-yellow-500' :
         'border-l-green-500'
@@ -151,24 +162,20 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
           <div className="flex items-center space-x-2 mb-2">
             
             {task.status !== 'overdue' ? (
-              <div
-                {...attributes}
-                {...listeners}
-                className="cursor-grab active:cursor-grabbing hover:text-purple-400 transition"
-              >
-                <GripVertical className="w-4 h-4 text-gray-500" />
+              <div className="cursor-grab active:cursor-grabbing text-slate-400 dark:text-gray-500">
+                <GripVertical className="w-4 h-4" />
               </div>
             ) : (
               <div title="Overdue tasks are locked">
-                <Lock className="w-4 h-4 text-red-500/50" />
+                <Lock className="w-4 h-4 text-red-500" />
               </div>
             )}
 
-            <h4 className="font-semibold text-white line-clamp-2">{task.title}</h4>
+            <h4 className="font-semibold text-slate-800 dark:text-white line-clamp-2">{task.title}</h4>
           </div>
           
           {task.description && (
-            <p className="text-sm text-gray-400 mb-3 line-clamp-2">{task.description}</p>
+            <p className="text-sm text-slate-600 dark:text-gray-400 mb-3 line-clamp-2">{task.description}</p>
           )}
           
           <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -178,13 +185,13 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
             </span>
             
             {task.category && task.category !== 'General' && (
-              <span className="px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
+              <span className="px-2 py-1 rounded-full bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30">
                 {task.category}
               </span>
             )}
             
             {task.due_date && (
-              <span className={`flex items-center gap-1 px-2 py-1 rounded-full border ${isOverdue ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-gray-500/20 text-gray-400 border-gray-500/30'}`}>
+              <span className={`flex items-center gap-1 px-2 py-1 rounded-full border ${isOverdue ? 'bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 border-red-500/30' : 'bg-slate-100 dark:bg-gray-500/20 text-slate-600 dark:text-gray-400 border-slate-300 dark:border-gray-500/30'}`}>
                 <Calendar className="w-3 h-3" />
                 <span>{format(new Date(task.due_date), 'MMM dd')}</span>
                 {isOverdue && <Clock className="w-3 h-3 ml-1" />}
@@ -196,18 +203,18 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
         <div className="flex space-x-1 ml-2">
           <button
             onClick={() => setIsEditing(true)}
-            className="p-1.5 hover:bg-purple-500/20 rounded-lg transition group"
+            className="p-1.5 hover:bg-blue-100 dark:hover:bg-purple-500/20 rounded-lg transition group"
             title="Edit task"
           >
-            <Edit2 className="w-4 h-4 text-gray-400 group-hover:text-purple-400" />
+            <Edit2 className="w-4 h-4 text-slate-400 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-purple-400" />
           </button>
           <button
             onClick={handleDelete}
             disabled={isDeleting}
-            className="p-1.5 hover:bg-red-500/20 rounded-lg transition group"
+            className="p-1.5 hover:bg-red-100 dark:hover:bg-red-500/20 rounded-lg transition group"
             title="Delete task"
           >
-            <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-400" />
+            <Trash2 className="w-4 h-4 text-slate-400 dark:text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400" />
           </button>
         </div>
       </div>
