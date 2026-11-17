@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
 
-export function Register() {
-  const navigate = useNavigate();
+export default function Register() {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -33,7 +32,7 @@ export function Register() {
             onChange={(e) => setFormData({...formData, password: e.target.value})} />
           <button type="submit" className="w-full py-3 bg-purple-600 rounded-xl text-white font-bold">Register</button>
         </form>
-        <p className="text-center mt-4 text-gray-400">Already have an account? <Link to="/login" className="text-purple-400">Login</Link></p>
+        <p className="text-center mt-4 text-gray-400">Have an account? <Link to="/login" className="text-purple-400">Login</Link></p>
       </div>
     </div>
   );
