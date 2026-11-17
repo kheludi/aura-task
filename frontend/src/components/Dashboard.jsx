@@ -12,7 +12,7 @@ export default function Dashboard() {
       <header className="glass-card p-4 flex justify-between items-center sticky top-0 z-50 rounded-none border-t-0 border-x-0">
         <div className="flex items-center space-x-3">
           <Sparkles className="text-purple-500 w-8 h-8" />
-          <h1 className="text-xl font-bold gradient-text">Aura Task</h1>
+          <h1 className="text-xl font-bold text-purple-400">Aura Task</h1>
           <span className="text-gray-400 text-sm ml-4">Welcome, {username}</span>
         </div>
         <div className="flex space-x-4">
