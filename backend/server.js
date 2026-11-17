@@ -10,7 +10,10 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: true, // Allows all origins for development and deployment
+    origin: [
+        'http://localhost:3000', 
+        'https://aura-task-five.vercel.app' // <-- Your live Vercel link
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
