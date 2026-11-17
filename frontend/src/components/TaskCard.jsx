@@ -47,7 +47,7 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
   const isOverdue = task.due_date && new Date(task.due_date) < new Date() && task.status !== 'completed';
   
   const handleDelete = async (e) => {
-    e.stopPropagation(); // Prevents dragging when clicking delete
+    e.stopPropagation();
     if (window.confirm('Are you sure you want to delete this task?')) {
       setIsDeleting(true);
       try {
@@ -76,13 +76,6 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
       onTaskUpdate();
     } catch (error) {
       toast.error('Failed to update task');
-    }
-  };
-
-  // Prevents dragging if clicking a button
-  const handlePointerDown = (e) => {
-    if (e.target.closest('button')) {
-      e.stopPropagation();
     }
   };
 
@@ -150,7 +143,6 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
       style={style}
       {...attributes}
       {...listeners}
-      onPointerDown={handlePointerDown}
       className={`glass-card p-4 cursor-grab active:cursor-grabbing transition-all duration-300 hover:scale-102 hover:shadow-xl border-l-4 ${
         task.priority === 'high' ? 'border-l-red-500' :
         task.priority === 'medium' ? 'border-l-yellow-500' :
@@ -201,7 +193,9 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
         </div>
         
         <div className="flex space-x-1 ml-2">
+          {/* Added data-no-dnd="true" so clicking these buttons doesn't start a drag */}
           <button
+            data-no-dnd="true"
             onClick={() => setIsEditing(true)}
             className="p-1.5 hover:bg-blue-100 dark:hover:bg-purple-500/20 rounded-lg transition group"
             title="Edit task"
@@ -209,6 +203,7 @@ function TaskCard({ task, onTaskUpdate, isDragging = false }) {
             <Edit2 className="w-4 h-4 text-slate-400 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-purple-400" />
           </button>
           <button
+            data-no-dnd="true"
             onClick={handleDelete}
             disabled={isDeleting}
             className="p-1.5 hover:bg-red-100 dark:hover:bg-red-500/20 rounded-lg transition group"
