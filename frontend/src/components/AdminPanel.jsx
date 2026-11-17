@@ -21,24 +21,26 @@ function AdminPanel() {
 
   useEffect(() => {
     fetchSummary();
-    fetchSystemStats();
   }, []);
 
   const fetchSummary = async () => {
     try {
       const response = await api.get('/admin/summary');
       setSummary(response.data);
+      
+      // Calculate the top counters directly from the summary data
+      const users = response.data;
+      setSystemStats({
+        totalUsers: users.length,
+        totalTasks: users.reduce((sum, u) => sum + Number(u.total_tasks || 0), 0),
+        totalCompleted: users.reduce((sum, u) => sum + Number(u.completed || 0), 0),
+        totalOverdue: users.reduce((sum, u) => sum + Number(u.overdue || 0), 0),
+        activeUsers: users.filter(u => u.user_status === 'active').length,
+        adminUsers: users.filter(u => u.role === 'admin').length
+      });
+      
     } catch (error) {
       toast.error('Failed to load summary');
-    }
-  };
-
-  const fetchSystemStats = async () => {
-    try {
-      const response = await api.get('/admin/stats/system');
-      setSystemStats(response.data);
-    } catch (error) {
-      console.error('Failed to fetch system stats');
     }
   };
 

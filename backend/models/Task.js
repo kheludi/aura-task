@@ -59,15 +59,15 @@ class Task {
         );
     }
 
-    static async getAdminSummary() {
+        static async getAdminSummary() {
         const [rows] = await db.execute(
             `SELECT 
                 u.id, u.username, u.email, u.role, u.status as user_status,
-                COUNT(t.id)::int as total_tasks,
-                SUM(CASE WHEN t.status = 'todo' THEN 1 ELSE 0 END)::int as pending,
-                SUM(CASE WHEN t.status = 'doing' THEN 1 ELSE 0 END)::int as in_progress,
-                SUM(CASE WHEN t.status = 'completed' THEN 1 ELSE 0 END)::int as completed,
-                SUM(CASE WHEN t.status = 'overdue' THEN 1 ELSE 0 END)::int as overdue
+                CAST(COUNT(t.id) AS INTEGER) as total_tasks,
+                CAST(SUM(CASE WHEN t.status = 'todo' THEN 1 ELSE 0 END) AS INTEGER) as pending,
+                CAST(SUM(CASE WHEN t.status = 'doing' THEN 1 ELSE 0 END) AS INTEGER) as in_progress,
+                CAST(SUM(CASE WHEN t.status = 'completed' THEN 1 ELSE 0 END) AS INTEGER) as completed,
+                CAST(SUM(CASE WHEN t.status = 'overdue' THEN 1 ELSE 0 END) AS INTEGER) as overdue
             FROM users u
             LEFT JOIN tasks t ON u.id = t.user_id
             GROUP BY u.id, u.username, u.email, u.role, u.status
