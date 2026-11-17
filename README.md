@@ -1,4 +1,3 @@
-# aura-task
 # ✨ Aura Task - Futuristic Task Management System
 
 ![Aura Task Banner](https://via.placeholder.com/1200x400/0a0a0f/8b5cf6?text=Aura+Task+-+Stay+Organized,+Code+Better)
@@ -71,7 +70,7 @@ If you want to run this project locally, follow these steps:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/aura-task.git
+git clone https://github.com/kheludi/aura-task.git
 cd aura-task
 ```
 ### 2. Setup the Backend
@@ -99,7 +98,7 @@ npm run dev
 ```
 The app will be running at http://localhost:3000.
 
-👤 Author
+### 👤 Author
 Khalid Muhammed
 
 GitHub: @kheludi
