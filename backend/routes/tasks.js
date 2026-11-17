@@ -1,58 +1,60 @@
 import express from 'express';
-import pool from '../config/database.js';
+import { authenticate } from '../middleware/auth.js';
+import Task from '../models/Task.js';
 
 const router = express.Router();
+router.use(authenticate);
 
-// GET all tasks
 router.get('/', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT * FROM tasks ORDER BY created_at DESC');
-    res.json(rows);
-  } catch (err) {
-    console.error('Error fetching tasks:', err.message);
-    res.status(500).json({ error: 'Server error fetching tasks' });
-  }
-});
-
-// POST create a new task
-router.post('/', async (req, res) => {
-  try {
-    const { title, description, status, priority, category, due_date } = req.body;
-
-    if (!title) {
-      return res.status(400).json({ error: 'Task title is required' });
+    try {
+        await Task.checkOverdueTasks();
+        const tasks = await Task.findByUser(req.userId);
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch tasks' });
     }
-
-    const [result] = await pool.query(
-      'INSERT INTO tasks (title, description, status, priority, category, due_date) VALUES (?, ?, ?, ?, ?, ?)',
-      [
-        title, 
-        description || '', 
-        status || 'todo', 
-        priority || 'medium', 
-        category || 'general', 
-        due_date || null
-      ]
-    );
-
-    const [newTask] = await pool.query('SELECT * FROM tasks WHERE id = ?', [result.insertId]);
-    res.status(201).json(newTask[0]);
-  } catch (err) {
-    console.error('Error creating task:', err.message);
-    res.status(500).json({ error: 'Server error creating task' });
-  }
 });
 
-// DELETE a task
+router.post('/', async (req, res) => {
+    try {
+        const { title, description, priority, category, dueDate } = req.body;
+        if (!title) return res.status(400).json({ error: 'Task title is required' });
+        
+        await Task.create({ userId: req.userId, title, description, priority, category, dueDate });
+        const tasks = await Task.findByUser(req.userId);
+        res.status(201).json(tasks);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create task' });
+    }
+});
+
+router.patch('/:id/status', async (req, res) => {
+    try {
+        await Task.updateStatus(req.params.id, req.userId, req.body.status);
+        const tasks = await Task.findByUser(req.userId);
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update task' });
+    }
+});
+
+router.put('/:id', async (req, res) => {
+    try {
+        await Task.update(req.params.id, req.userId, req.body);
+        const tasks = await Task.findByUser(req.userId);
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update task' });
+    }
+});
+
 router.delete('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    await pool.query('DELETE FROM tasks WHERE id = ?', [id]);
-    res.json({ message: 'Task deleted successfully' });
-  } catch (err) {
-    console.error('Error deleting task:', err.message);
-    res.status(500).json({ error: 'Server error deleting task' });
-  }
+    try {
+        await Task.delete(req.params.id, req.userId);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete task' });
+    }
 });
 
 export default router;
